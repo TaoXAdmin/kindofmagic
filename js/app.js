@@ -1,67 +1,5 @@
 // Importation des modules
-import { initLandingScene} // Activer l'Easter Egg (mini-jeu)
-function activateEasterEgg() {
-  console.log('Easter Egg Activated!');
-  // Afficher et initialiser le mini-jeu
-  // Cette fonction sera implémentée dans le module easter-eggs.js
-}
-
-// Basculer le mode nuit
-function toggleNightMode() {
-  state.nightMode = !state.nightMode;
-  document.body.classList.toggle('night-mode', state.nightMode);
-  
-  const crystalBall = document.getElementById('crystal-ball');
-  if (state.nightMode) {
-    crystalBall.classList.add('active');
-    // Activer les étoiles et autres effets nocturnes
-  } else {
-    crystalBall.classList.remove('active');
-    // Désactiver les effets nocturnes
-  }
-}
-
-// Configuration de la reconnaissance vocale
-function setupVoiceRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  
-  recognition.continuous = true;
-  recognition.interimResults = false;
-  recognition.lang = 'fr-FR';
-  
-  recognition.onresult = (event) => {
-    const last = event.results.length - 1;
-    const command = event.results[last][0].transcript.trim().toLowerCase();
-    
-    if (command.includes('abracadabra')) {
-      // Déclencher une animation spéciale
-      triggerSpecialAnimation();
-    }
-  };
-  
-  recognition.onerror = (event) => {
-    console.error('Speech recognition error', event.error);
-  };
-  
-  // Démarrer la reconnaissance vocale
-  try {
-    recognition.start();
-  } catch (e) {
-    console.error('Speech recognition failed to start', e);
-  }
-}
-
-// Déclencher une animation spéciale via la commande vocale
-function triggerSpecialAnimation() {
-  console.log('Special animation triggered by voice command!');
-  // Cette fonction sera implémentée plus tard
-  // Elle déclenchera une animation spectaculaire
-}
-
-// Initialiser l'application quand le DOM est chargé
-document.addEventListener('DOMContentLoaded', init);
-} from './modules/landing.js';
+import { initLandingScene } from './modules/landing.js';
 import { initCarousel } from './modules/carousel.js';
 import { initMagicRoom } from './modules/magic-room.js';
 import { initBiography } from './modules/biography.js';
@@ -206,3 +144,112 @@ function handleIntersection() {
     observer.observe(section);
   });
 }
+
+// Ajouter les écouteurs d'événements
+function addEventListeners() {
+  // Gestion du scroll pour le header
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      header.classList.add('header--scrolled');
+    } else {
+      header.classList.remove('header--scrolled');
+    }
+  });
+  
+  // Navigation mobile
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('active');
+    navMenu.classList.toggle('active');
+    state.isNavOpen = navMenu.classList.contains('active');
+  });
+  
+  // Fermer la navigation au clic sur un lien
+  document.querySelectorAll('.nav__menu a').forEach(link => {
+    link.addEventListener('click', () => {
+      navToggle.classList.remove('active');
+      navMenu.classList.remove('active');
+      state.isNavOpen = false;
+    });
+  });
+  
+  // Gestion du Konami Code
+  document.addEventListener('keydown', (e) => {
+    state.konami.sequence += e.keyCode;
+    state.konami.sequence = state.konami.sequence.slice(-20);
+    
+    if (state.konami.sequence === state.konami.correctSequence) {
+      activateEasterEgg();
+    }
+  });
+  
+  // Crystal Ball pour passer en mode nuit
+  document.getElementById('crystal-ball').addEventListener('click', toggleNightMode);
+  
+  // Reconnaissance vocale (si supportée par le navigateur)
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    setupVoiceRecognition();
+  }
+}
+
+// Activer l'Easter Egg (mini-jeu)
+function activateEasterEgg() {
+  console.log('Easter Egg Activated!');
+  // Afficher et initialiser le mini-jeu
+  // Cette fonction sera implémentée dans le module easter-eggs.js
+}
+
+// Basculer le mode nuit
+function toggleNightMode() {
+  state.nightMode = !state.nightMode;
+  document.body.classList.toggle('night-mode', state.nightMode);
+  
+  const crystalBall = document.getElementById('crystal-ball');
+  if (state.nightMode) {
+    crystalBall.classList.add('active');
+    // Activer les étoiles et autres effets nocturnes
+  } else {
+    crystalBall.classList.remove('active');
+    // Désactiver les effets nocturnes
+  }
+}
+
+// Configuration de la reconnaissance vocale
+function setupVoiceRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.lang = 'fr-FR';
+  
+  recognition.onresult = (event) => {
+    const last = event.results.length - 1;
+    const command = event.results[last][0].transcript.trim().toLowerCase();
+    
+    if (command.includes('abracadabra')) {
+      // Déclencher une animation spéciale
+      triggerSpecialAnimation();
+    }
+  };
+  
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error', event.error);
+  };
+  
+  // Démarrer la reconnaissance vocale
+  try {
+    recognition.start();
+  } catch (e) {
+    console.error('Speech recognition failed to start', e);
+  }
+}
+
+// Déclencher une animation spéciale via la commande vocale
+function triggerSpecialAnimation() {
+  console.log('Special animation triggered by voice command!');
+  // Cette fonction sera implémentée plus tard
+  // Elle déclenchera une animation spectaculaire
+}
+
+// Initialiser l'application quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', init);
