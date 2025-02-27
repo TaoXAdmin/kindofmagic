@@ -24,101 +24,148 @@ const header = document.querySelector('.header');
 const navToggle = document.querySelector('.nav__toggle');
 const navMenu = document.querySelector('.nav__menu');
 
+// Failsafe pour éviter un chargement infini
+setTimeout(() => {
+  if (loader && !loader.classList.contains('hidden')) {
+    console.warn('Loading timeout reached, forcing display of content');
+    hideLoader();
+  }
+}, 5000); // 5 secondes de timeout
+
 // Fonction d'initialisation principale
 function init() {
-  // Chargement des assets
+  // Chargement des assets avec une gestion des erreurs améliorée
   loadAssets().then(() => {
-    // Initialiser les modules
-    initLogoAnimation();
-    initNavigation();
-    initLandingScene();
-    initCarousel();
-    initMagicRoom();
-    initBiography();
-    initContact();
-    initEasterEggs();
-    
-    // Masquer le loader
+    try {
+      // Initialiser les modules
+      if (typeof initLogoAnimation === 'function') initLogoAnimation();
+      if (typeof initNavigation === 'function') initNavigation();
+      
+      // Ces modules peuvent nécessiter des assets, les mettre dans des try/catch individuels
+      try { if (typeof initLandingScene === 'function') initLandingScene(); } catch (e) { console.warn('Error initializing landing scene:', e); }
+      try { if (typeof initCarousel === 'function') initCarousel(); } catch (e) { console.warn('Error initializing carousel:', e); }
+      try { if (typeof initMagicRoom === 'function') initMagicRoom(); } catch (e) { console.warn('Error initializing magic room:', e); }
+      try { if (typeof initBiography === 'function') initBiography(); } catch (e) { console.warn('Error initializing biography:', e); }
+      try { if (typeof initContact === 'function') initContact(); } catch (e) { console.warn('Error initializing contact:', e); }
+      try { if (typeof initEasterEggs === 'function') initEasterEggs(); } catch (e) { console.warn('Error initializing easter eggs:', e); }
+      
+      // Masquer le loader quoi qu'il arrive
+      hideLoader();
+      
+      // Ajouter les écouteurs d'événements
+      addEventListeners();
+      
+      // Initialiser l'intersection observer
+      handleIntersection();
+    } catch (error) {
+      console.error('Error during initialization:', error);
+      // Assurer que le loader est masqué même en cas d'erreur
+      hideLoader();
+    }
+  }).catch(error => {
+    console.error('Asset loading failed:', error);
+    // Assurer que le loader est masqué même en cas d'erreur
     hideLoader();
-    
-    // Ajouter les écouteurs d'événements
-    addEventListeners();
-    
-    // Initialiser l'intersection observer
-    handleIntersection();
   });
 }
 
 // Fonction de chargement des assets
 async function loadAssets() {
-  const assets = [
-    './assets/textures/velvet-texture.png',
-    './assets/videos/magic-background.mp4',
-    './assets/models/card.glb',
-    './assets/icons/scroll-hand.svg',
-    './assets/icons/crystal-ball.svg'
-    // Ajouter d'autres assets à précharger
-  ];
-  
-  const promises = assets.map(asset => {
-    return new Promise((resolve, reject) => {
-      if (asset.endsWith('.mp4') || asset.endsWith('.webm')) {
-        const video = document.createElement('video');
-        video.addEventListener('canplaythrough', () => resolve(), { once: true });
-        video.addEventListener('error', () => reject(new Error(`Failed to load ${asset}`)), { once: true });
-        video.src = asset;
-        video.load();
-      } else if (asset.endsWith('.png') || asset.endsWith('.jpg') || asset.endsWith('.svg')) {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error(`Failed to load ${asset}`));
-        img.src = asset;
-      } else {
-        fetch(asset)
-          .then(response => {
-            if (!response.ok) throw new Error(`Failed to load ${asset}`);
-            resolve();
-          })
-          .catch(reject);
-      }
+  // Ajoutons une gestion des erreurs pour éviter le blocage en cas d'asset manquant
+  try {
+    const assets = [
+      './assets/textures/velvet-texture.png',
+      './assets/videos/magic-background.mp4',
+      // Commentons cette ligne qui peut causer l'erreur
+      // './assets/models/card.glb',
+      './assets/icons/scroll-hand.svg',
+      './assets/icons/crystal-ball.svg'
+    ];
+    
+    const promises = assets.map(asset => {
+      return new Promise((resolve) => {
+        if (asset.endsWith('.mp4') || asset.endsWith('.webm')) {
+          const video = document.createElement('video');
+          video.addEventListener('canplaythrough', () => resolve(), { once: true });
+          video.addEventListener('error', () => {
+            console.warn(`Failed to load ${asset}, continuing anyway`);
+            resolve(); // Résoudre même en cas d'erreur
+          }, { once: true });
+          video.src = asset;
+          video.load();
+        } else if (asset.endsWith('.png') || asset.endsWith('.jpg') || asset.endsWith('.svg')) {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => {
+            console.warn(`Failed to load ${asset}, continuing anyway`);
+            resolve(); // Résoudre même en cas d'erreur
+          };
+          img.src = asset;
+        } else {
+          fetch(asset)
+            .then(response => {
+              if (!response.ok) {
+                console.warn(`Failed to load ${asset}, continuing anyway`);
+              }
+              resolve();
+            })
+            .catch(error => {
+              console.warn(`Failed to load ${asset}: ${error.message}, continuing anyway`);
+              resolve(); // Résoudre même en cas d'erreur
+            });
+        }
+      });
     });
-  });
-  
-  return Promise.all(promises);
+    
+    return Promise.all(promises);
+  } catch (error) {
+    console.error("Error in asset loading, continuing anyway:", error);
+    return Promise.resolve(); // Ne bloque pas l'initialisation en cas d'erreur
+  }
 }
 
 // Fonction pour masquer le loader
 function hideLoader() {
+  if (!loader) return;
+  
   loader.classList.add('hidden');
   state.isLoading = false;
   
   // Animation d'entrée pour le contenu initial
-  gsap.from('.landing__title', {
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    ease: 'power3.out'
-  });
-  
-  gsap.from('.landing__subtitle', {
-    y: 30,
-    opacity: 0,
-    duration: 1,
-    delay: 0.3,
-    ease: 'power3.out'
-  });
-  
-  gsap.from('.landing__cta', {
-    y: 20,
-    opacity: 0,
-    duration: 1,
-    delay: 0.6,
-    ease: 'power3.out'
-  });
+  if (typeof gsap !== 'undefined') {
+    try {
+      gsap.from('.landing__title', {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.landing__subtitle', {
+        y: 30,
+        opacity: 0,
+        duration: 1,
+        delay: 0.3,
+        ease: 'power3.out'
+      });
+      
+      gsap.from('.landing__cta', {
+        y: 20,
+        opacity: 0,
+        duration: 1,
+        delay: 0.6,
+        ease: 'power3.out'
+      });
+    } catch (e) {
+      console.warn('Error in gsap animations:', e);
+    }
+  }
 }
 
 // Gestion du scroll et de l'intersection observer
 function handleIntersection() {
+  if (!sections || !sections.length) return;
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -148,29 +195,33 @@ function handleIntersection() {
 // Ajouter les écouteurs d'événements
 function addEventListeners() {
   // Gestion du scroll pour le header
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      header.classList.add('header--scrolled');
-    } else {
-      header.classList.remove('header--scrolled');
-    }
-  });
+  if (header) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.add('header--scrolled');
+      } else {
+        header.classList.remove('header--scrolled');
+      }
+    });
+  }
   
   // Navigation mobile
-  navToggle.addEventListener('click', () => {
-    navToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-    state.isNavOpen = navMenu.classList.contains('active');
-  });
-  
-  // Fermer la navigation au clic sur un lien
-  document.querySelectorAll('.nav__menu a').forEach(link => {
-    link.addEventListener('click', () => {
-      navToggle.classList.remove('active');
-      navMenu.classList.remove('active');
-      state.isNavOpen = false;
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+      navToggle.classList.toggle('active');
+      navMenu.classList.toggle('active');
+      state.isNavOpen = navMenu.classList.contains('active');
     });
-  });
+    
+    // Fermer la navigation au clic sur un lien
+    document.querySelectorAll('.nav__menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+        state.isNavOpen = false;
+      });
+    });
+  }
   
   // Gestion du Konami Code
   document.addEventListener('keydown', (e) => {
@@ -183,7 +234,10 @@ function addEventListeners() {
   });
   
   // Crystal Ball pour passer en mode nuit
-  document.getElementById('crystal-ball').addEventListener('click', toggleNightMode);
+  const crystalBall = document.getElementById('crystal-ball');
+  if (crystalBall) {
+    crystalBall.addEventListener('click', toggleNightMode);
+  }
   
   // Reconnaissance vocale (si supportée par le navigateur)
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -195,7 +249,9 @@ function addEventListeners() {
 function activateEasterEgg() {
   console.log('Easter Egg Activated!');
   // Afficher et initialiser le mini-jeu
-  // Cette fonction sera implémentée dans le module easter-eggs.js
+  if (typeof initEasterEggs !== 'undefined' && typeof initEasterEggs.activateCardGame === 'function') {
+    initEasterEggs.activateCardGame();
+  }
 }
 
 // Basculer le mode nuit
@@ -204,43 +260,49 @@ function toggleNightMode() {
   document.body.classList.toggle('night-mode', state.nightMode);
   
   const crystalBall = document.getElementById('crystal-ball');
-  if (state.nightMode) {
-    crystalBall.classList.add('active');
-    // Activer les étoiles et autres effets nocturnes
-  } else {
-    crystalBall.classList.remove('active');
-    // Désactiver les effets nocturnes
+  if (crystalBall) {
+    if (state.nightMode) {
+      crystalBall.classList.add('active');
+      // Activer les étoiles et autres effets nocturnes
+    } else {
+      crystalBall.classList.remove('active');
+      // Désactiver les effets nocturnes
+    }
   }
 }
 
 // Configuration de la reconnaissance vocale
 function setupVoiceRecognition() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  
-  recognition.continuous = true;
-  recognition.interimResults = false;
-  recognition.lang = 'fr-FR';
-  
-  recognition.onresult = (event) => {
-    const last = event.results.length - 1;
-    const command = event.results[last][0].transcript.trim().toLowerCase();
-    
-    if (command.includes('abracadabra')) {
-      // Déclencher une animation spéciale
-      triggerSpecialAnimation();
-    }
-  };
-  
-  recognition.onerror = (event) => {
-    console.error('Speech recognition error', event.error);
-  };
-  
-  // Démarrer la reconnaissance vocale
   try {
-    recognition.start();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'fr-FR';
+    
+    recognition.onresult = (event) => {
+      const last = event.results.length - 1;
+      const command = event.results[last][0].transcript.trim().toLowerCase();
+      
+      if (command.includes('abracadabra')) {
+        // Déclencher une animation spéciale
+        triggerSpecialAnimation();
+      }
+    };
+    
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error', event.error);
+    };
+    
+    // Démarrer la reconnaissance vocale
+    try {
+      recognition.start();
+    } catch (e) {
+      console.error('Speech recognition failed to start', e);
+    }
   } catch (e) {
-    console.error('Speech recognition failed to start', e);
+    console.warn('Speech recognition not supported in this browser', e);
   }
 }
 
