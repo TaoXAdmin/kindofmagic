@@ -1,5 +1,5 @@
 // Importation des modules
-import { initLandingScene // Activer l'Easter Egg (mini-jeu)
+import { initLandingScene} // Activer l'Easter Egg (mini-jeu)
 function activateEasterEgg() {
   console.log('Easter Egg Activated!');
   // Afficher et initialiser le mini-jeu
