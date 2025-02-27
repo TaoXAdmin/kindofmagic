@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Illusion Cinématique | Magie & Mystère</title>
+    <meta name="description" content="Découvrez l'univers magique d'un illusionniste d'exception. Spectacles, événements et expériences uniques.">
+    
+    <!-- Préchargement des polices -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    
+    <!-- Préchargement des scripts -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
+    <link rel="preload" href="js/vendors/gsap.min.js" as="script">
+</head>
+<body>	
+    <!-- Loader -->
+    <div class="loader">
+        <div class="loader__spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header__logo">
+            <svg id="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Le SVG du logo sera remplacé par du JS -->
+            </svg>
+        </div>
+        <nav class="header__nav">
+            <div class="nav__toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav__menu">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#prestations">Prestations</a></li>
+                <li><a href="#magic-room">Magic Room</a></li>
+                <li><a href="#biographie">Biographie</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Landing Section -->
+    <section id="accueil" class="landing">
+        <div class="landing__background">
+            <!-- Canvas pour WebGL -->
+            <canvas id="landing-canvas"></canvas>
+        </div>
+        <div class="landing__content">
+            <h1 class="landing__title">L'Art de l'Illusion</h1>
+            <p class="landing__subtitle">Où la réalité rencontre la magie</p>
+            <div class="landing__cta">
+                <a href="#prestations" class="btn btn--primary">Découvrir</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-indicator__hand"></div>
+            <div class="scroll-indicator__particles"></div>
+        </div>
+    </section>
+
+    <!-- Prestations Section -->
+    <section id="prestations" class="prestations">
+        <h2 class="section-title">Prestations Magiques</h2>
+        <div class="prestations__container">
+            <div id="carousel-container" class="prestations__carousel">
+                <!-- Le contenu du carrousel sera généré par JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Magic Room Section -->
+    <section id="magic-room" class="magic-room">
+        <h2 class="section-title">Magic Room</h2>
+        <div class="magic-room__container">
+            <div id="magic-room-canvas-container">
+                <canvas id="magic-room-canvas"></canvas>
+            </div>
+            <div class="magic-room__controls">
+                <div class="controls__instructions">
+                    <p>Utilisez <span>ZQSD</span> ou <span>WASD</span> pour vous déplacer</p>
+                    <p>Cliquez sur les objets pour découvrir leurs secrets</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Biography Section -->
+    <section id="biographie" class="biography">
+        <h2 class="section-title">Biographie Enchantée</h2>
+        <div class="biography__container">
+            <div class="biography__timeline">
+                <!-- Timeline générée par JS -->
+            </div>
+            <div class="biography__portrait">
+                <div id="portrait-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2 class="section-title">Contact Mystique</h2>
+        <div class="contact__container">
+            <form id="contact-form" class="contact__form">
+                <div class="form__group">
+                    <input type="text" id="name" name="name" required>
+                    <label for="name">Votre nom</label>
+                </div>
+                <div class="form__group">
+                    <input type="email" id="email" name="email" required>
+                    <label for="email">Votre email</label>
+                </div>
+                <div class="form__group">
+                    <textarea id="message" name="message" required></textarea>
+                    <label for="message">Votre message</label>
+                </div>
+                <button type="submit" class="btn btn--submit">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer__content">
+            <div class="footer__logo">
+                <svg id="footer-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Même SVG que dans le header -->
+                </svg>
+            </div>
+            <div class="footer__links">
+                <ul>
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#prestations">Prestations</a></li>
+                    <li><a href="#magic-room">Magic Room</a></li>
+                    <li><a href="#biographie">Biographie</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer__social">
+                <a href="#" aria-label="Instagram"><span class="icon-instagram"></span></a>
+                <a href="#" aria-label="Facebook"><span class="icon-facebook"></span></a>
+                <a href="#" aria-label="Twitter"><span class="icon-twitter"></span></a>
+                <a href="#" aria-label="YouTube"><span class="icon-youtube"></span></a>
+            </div>
+            <div class="footer__crystal-ball" id="crystal-ball"></div>
+        </div>
+        <div class="footer__copyright">
+            <p>&copy; 2025 Illusion Cinématique. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/vendors/three.min.js"></script>
+    <script src="js/vendors/gsap.min.js"></script>
+    <script src="js/vendors/particles.min.js"></script>
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+@font-face {
+  font-family: 'magic-icons';
+  src: url('../assets/fonts/magic-icons.eot?12345678');
+  src: url('../assets/fonts/magic-icons.eot?12345678#iefix') format('embedded-opentype'),
+       url('../assets/fonts/magic-icons.woff2?12345678') format('woff2'),
+       url('../assets/fonts/magic-icons.woff?12345678') format('woff'),
+       url('../assets/fonts/magic-icons.ttf?12345678') format('truetype'),
+       url('../assets/fonts/magic-icons.svg?12345678#magic-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Classes d'icônes pour les réseaux sociaux et autres */
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "magic-icons";
+  font-style: normal;
+  font-weight: normal;
+  speak: never;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1em;
+  margin-left: .2em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Icônes de réseaux sociaux */
+.icon-facebook:before { content: '\f09a'; }
+.icon-twitter:before { content: '\f099'; }
+.icon-instagram:before { content: '\f16d'; }
+.icon-youtube:before { content: '\f167'; }
+
+/* Icônes de navigation */
+.icon-home:before { content: '\e800'; }
+.icon-mail:before { content: '\e801'; }
+.icon-user:before { content: '\e802'; }
+.icon-calendar:before { content: '\e803'; }
+.icon-magic:before { content: '\f0d0'; }
+
+/* Icônes pour les effets magiques */
+.icon-wand:before { content: '\e804'; }
+.icon-hat:before { content: '\e805'; }
+.icon-cards:before { content: '\e806'; }
+.icon-rabbit:before { content: '\e807'; }
+.icon-dove:before { content: '\e808'; }
+
+/* Animation de rotation pour les icônes */
+.icon-spin {
+  animation: icon-spin 2s infinite linear;
+}
+
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation de pulsation pour les icônes */
+.icon-pulse {
+  animation: icon-pulse 1s infinite alternate;
+}
+
+@keyframes icon-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
